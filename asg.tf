@@ -8,8 +8,9 @@ resource "aws_launch_template" "app" {
 
   user_data = base64encode(<<-EOF
               #!/bin/bash
+              set -e
               apt-get update -y
-              apt-get install -y docker.io
+              apt-get install -y docker.io git
               systemctl start docker
               systemctl enable docker
               usermod -aG docker ubuntu
@@ -18,15 +19,16 @@ resource "aws_launch_template" "app" {
               git clone https://github.com/gabrielecirulli/2048.git /home/ubuntu/2048
               cd /home/ubuntu/2048
               
-              # Build and run 2048 game in Docker
-              # Create a simple HTTP server container to serve the static 2048 game
-              docker run -d -p 80:8000 \
+              # Build and run 2048 game in Docker with proper port mapping
+              # Serve 2048 static files on port 80
+              docker run -d -p 80:80 \
                 --name 2048-game \
                 -v /home/ubuntu/2048:/usr/local/apache2/htdocs \
                 httpd:2.4
               
-              # Health check endpoint
-              echo "2048 Game Started" > /tmp/health.txt
+              # Verify container is running
+              sleep 5
+              docker ps | grep 2048-game > /tmp/health.txt || echo "Container failed to start" > /tmp/health.txt
               EOF
   )
 
