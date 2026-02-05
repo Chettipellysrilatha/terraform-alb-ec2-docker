@@ -23,6 +23,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Clone 2048 Game Repository
+        run: |
+          git clone https://github.com/gabrielecirulli/2048.git ./2048-app
+          echo "✓ 2048 game repository cloned successfully"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -85,7 +90,12 @@ jobs:
 
       - name: Notify Deployment
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: echo "✅ Infrastructure deployment completed successfully"
+        run: |
+          echo "✅ Infrastructure deployment completed successfully"
+          echo "🎮 2048 Game Application deployed on EC2 instances"
+          echo "   - Running in Docker containers (Apache HTTP Server)"
+          echo "   - Accessible via ALB URL on port 80"
+          echo "   - Auto-scaling enabled based on CPU utilization"
 
 
 

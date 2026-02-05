@@ -9,24 +9,24 @@ resource "aws_launch_template" "app" {
   user_data = base64encode(<<-EOF
               #!/bin/bash
               apt-get update -y
-              apt-get install -y openjdk-11-jre-headless
               apt-get install -y docker.io
               systemctl start docker
               systemctl enable docker
               usermod -aG docker ubuntu
               
-              # Run nginx on port 80 for health checks and load balancer
-              docker run -d -p 80:80 --name web-server nginx:latest
+              # Clone 2048 game repository
+              git clone https://github.com/gabrielecirulli/2048.git /home/ubuntu/2048
+              cd /home/ubuntu/2048
               
-              # Java application runs on port 8080 internally
-              docker run -d -p 8080:8080 \
-                --name java-app \
-                -e JAVA_OPTS="-Xmx512m -Xms256m" \
-                openjdk:11-jre-slim \
-                java -jar /app/application.jar
+              # Build and run 2048 game in Docker
+              # Create a simple HTTP server container to serve the static 2048 game
+              docker run -d -p 80:8000 \
+                --name 2048-game \
+                -v /home/ubuntu/2048:/usr/local/apache2/htdocs \
+                httpd:2.4
               
               # Health check endpoint
-              echo "Application Started" > /tmp/health.txt
+              echo "2048 Game Started" > /tmp/health.txt
               EOF
   )
 
