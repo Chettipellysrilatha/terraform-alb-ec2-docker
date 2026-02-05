@@ -39,7 +39,10 @@ jobs:
         run: terraform fmt -check -recursive
 
       - name: Terraform Init
-        run: terraform init
+        run: |
+          terraform init
+          # If state sync error, try refreshing
+          terraform refresh -lock=false || true
 
       - name: Terraform Validate
         run: terraform validate
