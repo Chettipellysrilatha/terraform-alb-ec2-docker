@@ -8,14 +8,17 @@ resource "aws_launch_template" "app" {
 
   user_data = base64encode(<<-EOF
               #!/bin/bash
-              yum update -y
-              amazon-linux-extras install java-1.8.0-openjdk -y
-              amazon-linux-extras install docker -y
+              apt-get update -y
+              apt-get install -y openjdk-11-jre-headless
+              apt-get install -y docker.io
               systemctl start docker
               systemctl enable docker
-              usermod -a -G docker ec2-user
+              usermod -aG docker ubuntu
               
-              # Pull and run Java application from Docker
+              # Run nginx on port 80 for health checks and load balancer
+              docker run -d -p 80:80 --name web-server nginx:latest
+              
+              # Java application runs on port 8080 internally
               docker run -d -p 8080:8080 \
                 --name java-app \
                 -e JAVA_OPTS="-Xmx512m -Xms256m" \
@@ -23,7 +26,7 @@ resource "aws_launch_template" "app" {
                 java -jar /app/application.jar
               
               # Health check endpoint
-              echo "Java Application Started" > /tmp/health.txt
+              echo "Application Started" > /tmp/health.txt
               EOF
   )
 
