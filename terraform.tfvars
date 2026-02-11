@@ -17,3 +17,9 @@ asg_min_size         = 2
 asg_max_size         = 6
 asg_desired_capacity = 3
 
+# ECS Fargate Configuration
+ecs_desired_count = 2
+ecs_min_capacity  = 1
+ecs_max_capacity  = 4
+container_cpu     = 512
+container_memory  = 1024

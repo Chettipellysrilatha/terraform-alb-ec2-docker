@@ -46,3 +46,33 @@ variable "asg_desired_capacity" {
   default = 3
 }
 
+# ECS Fargate variables
+variable "ecs_desired_count" {
+  type    = number
+  default = 2
+  description = "Number of ECS tasks to run"
+}
+
+variable "ecs_min_capacity" {
+  type    = number
+  default = 1
+  description = "Minimum number of ECS tasks for auto-scaling"
+}
+
+variable "ecs_max_capacity" {
+  type    = number
+  default = 4
+  description = "Maximum number of ECS tasks for auto-scaling"
+}
+
+variable "container_cpu" {
+  type    = number
+  default = 512
+  description = "CPU units for ECS task (256, 512, 1024, 2048, 4096)"
+}
+
+variable "container_memory" {
+  type    = number
+  default = 1024
+  description = "Memory for ECS task in MB (512, 1024, 2048, 3072, 4096, etc)"
+}
